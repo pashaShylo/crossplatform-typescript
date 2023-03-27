@@ -1,6 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
 import { ScrollView, StyleSheet, Text, View, Pressable } from 'react-native';
-import { Quadrangle } from '../../classes/quadrangle';
 import { Square } from '../../classes/square';
 import { Rectangle } from '../../classes/rectangle';
 import { useState } from 'react';
@@ -9,6 +7,7 @@ export default function Lab4() {
 
   const [arr, setArr] = useState<(Square | Rectangle)[]>([]) 
   const [minArea, setMinArea] = useState<number | undefined>(undefined)
+  
   function calculate() : void{
     const res = []
     for(let i = 0; i < 5; i++){

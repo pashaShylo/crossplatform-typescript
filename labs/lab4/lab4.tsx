@@ -1,6 +1,6 @@
 import { ScrollView, StyleSheet, Text, View, Pressable } from 'react-native';
-import { Square } from '../../classes/square';
-import { Rectangle } from '../../classes/rectangle';
+import { Square } from '../../classes/lab5/square';
+import { Rectangle } from '../../classes/lab5/rectangle';
 import { useState } from 'react';
 
 export default function Lab4() {

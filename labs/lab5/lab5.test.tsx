@@ -1,5 +1,5 @@
-import { Square } from './classes/square';
-import { Rectangle } from "./classes/rectangle";
+import { Square } from '../../classes/lab5/square';
+import { Rectangle } from "../../classes/lab5/rectangle";
 
 describe("Square class", () => {
   test("creates an instance of Square with specified value", () => {

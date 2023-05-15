@@ -12,11 +12,13 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { Controller, useForm } from "react-hook-form";
 
 const Lab10 = () => {
-    const [workerList, setWorkerList] = useState([]);
+    const [workerList, setWorkerList] = useState<any>([]);
     const { handleSubmit, control } = useForm();
     const [open, setOpen] = useState(false);
     const [posValue, setPosValue] = useState(null);
     const [newPos, setNewPos] = useState("");
+    const [name, setName] = useState("");
+    const [surname, setSurname] = useState("");
     const [position, setPosition] = useState([
         { label: "Менеджер", value: 1 },
         { label: "Рекрутер", value: 2 },
@@ -34,7 +36,7 @@ const Lab10 = () => {
                 <Pressable
                     style={({ pressed }) => [
                         { backgroundColor: pressed ? "#66a3ff" : "#0066ff" },
-                        { ...styles.button, marginTop: 50 },
+                        { ...styles.button, marginTop: 10 },
                     ]}
                     onPress={() => {
                         setActivePos(
@@ -63,30 +65,22 @@ const Lab10 = () => {
                 <Text style={styles.text}>
                     Поточна посада {activePos.label}
                 </Text>
-                <Controller
-                    name="company"
-                    defaultValue=""
-                    control={control}
-                    render={({ field: { onChange, value } }) => (
-                        <View style={styles.dropdown1}>
-                            <DropDownPicker
-                                style={styles.dropdown}
-                                open={open}
-                                value={posValue}
-                                items={position}
-                                setOpen={setOpen}
-                                setValue={setPosValue}
-                                placeholder="Виберіть позицію"
-                                placeholderStyle={styles.placeholderStyles}
-                                activityIndicatorColor="#5188E3"
-                                searchable={false}
-                                onChangeValue={onChange}
-                                zIndex={1001}
-                                zIndexInverse={3001}
-                            />
-                        </View>
-                    )}
-                />
+                {workerList
+                    .filter((elem: any) => {
+                        return elem.position === activePos.value;
+                    })
+                    .map((elem: any) => {
+                        return (
+                            <View key={elem.id}>
+                                <Text style={styles.text}>
+                                    Ім'я: {elem.name}
+                                </Text>
+                                <Text style={styles.text}>
+                                    Фамілія: {elem.surname}
+                                </Text>
+                            </View>
+                        );
+                    })}
                 <TextInput
                     style={{
                         backgroundColor: "white",
@@ -119,7 +113,75 @@ const Lab10 = () => {
                         ]);
                     }}
                 >
-                    <Text style={styles.text}>Додати позицію</Text>
+                    <Text style={styles.text}>Додати посаду</Text>
+                </Pressable>
+                <Text style={{ ...styles.text, marginTop: 50, color: "black" }}>
+                    Додати співробітника
+                </Text>
+                <Text style={{ ...styles.text, marginTop: 20 }}>
+                    Введіть ім'я співробітника
+                </Text>
+                <TextInput
+                    style={{
+                        backgroundColor: "white",
+                        margin: 15,
+                        fontSize: 20,
+                        padding: 5,
+                    }}
+                    onChangeText={(text) => setName(text)}
+                ></TextInput>
+                <Text style={styles.text}>Введіть фамілію співробітника</Text>
+                <TextInput
+                    style={{
+                        backgroundColor: "white",
+                        margin: 15,
+                        fontSize: 20,
+                        padding: 5,
+                    }}
+                    onChangeText={(text) => setSurname(text)}
+                ></TextInput>
+                {/* <Controller
+                    name="company"
+                    defaultValue=""
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                        <View style={styles.dropdown1}>
+                            <DropDownPicker
+                                style={styles.dropdown}
+                                open={open}
+                                value={posValue}
+                                items={position}
+                                setOpen={setOpen}
+                                setValue={setPosValue}
+                                placeholder="Виберіть посаду"
+                                placeholderStyle={styles.placeholderStyles}
+                                activityIndicatorColor="#5188E3"
+                                searchable={false}
+                                onChangeValue={onChange}
+                                zIndex={1001}
+                                zIndexInverse={3001}
+                            />
+                        </View>
+                    )}
+                /> */}
+                <Pressable
+                    style={({ pressed }) => [
+                        { backgroundColor: pressed ? "#66a3ff" : "#0066ff" },
+                        { ...styles.button, width: 300 },
+                    ]}
+                    onPress={() => {
+                        setWorkerList([
+                            ...workerList,
+                            {
+                                id: Date.now(),
+                                name: name,
+                                surname: surname,
+                                position: activePos.value,
+                            },
+                        ]);
+                    }}
+                >
+                    <Text style={styles.text}>Додати співробітника</Text>
                 </Pressable>
             </ScrollView>
         </>

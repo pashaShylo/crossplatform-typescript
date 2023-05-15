@@ -390,60 +390,71 @@ const Lab8 = () => {
                               </View>
                           );
                       })}
-                <Pressable
-                    style={({ pressed }) => [
-                        {
-                            backgroundColor: pressed ? "#66a3ff" : "#0066ff",
-                        },
-                        styles.button,
-                    ]}
-                    onPress={() => {
-                        if (editable) {
-                            let flag = true;
-                            editStreets.forEach((newStreet: any) => {
-                                if (!nameValidator(newStreet).isValid) {
-                                    alert(nameValidator(newStreet).message);
-                                    flag = false;
-                                    return;
-                                }
-                                if (!districtValidator(newStreet).isValid) {
-                                    alert(districtValidator(newStreet).message);
-                                    flag = false;
-                                    return;
-                                }
-                                if (!lengthValidator(newStreet).isValid) {
-                                    alert(lengthValidator(newStreet).message);
-                                    flag = false;
-                                    return;
-                                }
-                                if (!historyValidator(newStreet).isValid) {
-                                    alert(historyValidator(newStreet).message);
-                                    flag = false;
-                                    return;
-                                }
-                                if (
-                                    !previousNamesValidator(newStreet).isValid
-                                ) {
-                                    alert(
-                                        previousNamesValidator(newStreet)
-                                            .message
-                                    );
-                                    flag = false;
-                                    return;
-                                }
-                            });
-                            if (!flag) return;
-                            setStreets([...editStreets]);
-                        }
-                        setEditable(!editable);
-                    }}
-                >
-                    {editable ? (
-                        <Text style={styles.text}>Submit</Text>
-                    ) : (
-                        <Text style={styles.text}>Edit</Text>
-                    )}
-                </Pressable>
+                {streets.length !== 0 ? (
+                    <Pressable
+                        style={({ pressed }) => [
+                            {
+                                backgroundColor: pressed
+                                    ? "#66a3ff"
+                                    : "#0066ff",
+                            },
+                            styles.button,
+                        ]}
+                        onPress={() => {
+                            if (editable) {
+                                let flag = true;
+                                editStreets.forEach((newStreet: any) => {
+                                    if (!nameValidator(newStreet).isValid) {
+                                        alert(nameValidator(newStreet).message);
+                                        flag = false;
+                                        return;
+                                    }
+                                    if (!districtValidator(newStreet).isValid) {
+                                        alert(
+                                            districtValidator(newStreet).message
+                                        );
+                                        flag = false;
+                                        return;
+                                    }
+                                    if (!lengthValidator(newStreet).isValid) {
+                                        alert(
+                                            lengthValidator(newStreet).message
+                                        );
+                                        flag = false;
+                                        return;
+                                    }
+                                    if (!historyValidator(newStreet).isValid) {
+                                        alert(
+                                            historyValidator(newStreet).message
+                                        );
+                                        flag = false;
+                                        return;
+                                    }
+                                    if (
+                                        !previousNamesValidator(newStreet)
+                                            .isValid
+                                    ) {
+                                        alert(
+                                            previousNamesValidator(newStreet)
+                                                .message
+                                        );
+                                        flag = false;
+                                        return;
+                                    }
+                                });
+                                if (!flag) return;
+                                setStreets([...editStreets]);
+                            }
+                            setEditable(!editable);
+                        }}
+                    >
+                        {editable ? (
+                            <Text style={styles.text}>Submit</Text>
+                        ) : (
+                            <Text style={styles.text}>Edit</Text>
+                        )}
+                    </Pressable>
+                ) : null}
             </ScrollView>
         </>
     );

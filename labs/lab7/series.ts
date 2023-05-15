@@ -3,11 +3,11 @@ function factorial(n: number): number {
 }
 
 function getSumm(x: number): number {
-    let a = Math.pow(x, 2 * 1) / (2 * factorial(1));
+    let a = Math.pow(x, 2 * 1) / factorial(2 * 1);
     let n = 2;
-    let S = Math.pow(x, 2 * 1) / (2 * factorial(1)) + 1;
+    let S = Math.pow(x, 2 * 1) / factorial(2 * 1) + 1;
     while (a > 0.001) {
-        a = Math.pow(x, 2 * n) / (2 * factorial(n));
+        a = Math.pow(x, 2 * n) / factorial(2 * n);
         S += a;
         n++;
     }

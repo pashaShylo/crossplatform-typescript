@@ -5,7 +5,7 @@ function factorial(n: number): number {
 }
 
 function rowSumm(x: number, n: number, summ: number): number {
-    let b = Math.pow(x, 2 * n) / (2 * factorial(n));
+    let b = Math.pow(x, 2 * n) / factorial(2 * n);
     summ = summ + b;
     n++;
     if (Math.abs(b) < 0.001) {

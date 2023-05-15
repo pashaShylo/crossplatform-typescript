@@ -12,10 +12,8 @@ test("Should return an array of calculated values based on the input array", () 
     expect(tabY([0, 1, 2, 3])).toEqual([1, 1.54, 3.76, 10.07]);
 });
 test("Should return an array of calculated values based on the input array", () => {
-    expect(recursion([0, 1, 2])).toEqual([1, 1.86, 27.8]);
-    expect(recursion([-1, -2, 0])).toEqual([1.86, 27.8, 1]);
+    expect(recursion([0, 1, 2])).toEqual([1, 1.54, 27.5]);
 });
 test("Should return an array of calculated values based on the input array", () => {
-    expect(series([0, 1, 2])).toEqual([1, 1.86, 27.8]);
-    expect(series([-1, -2, 0])).toEqual([1.86, 27.8, 1]);
+    expect(series([0, 1, 2])).toEqual([1, 1.4, 23.8]);
 });

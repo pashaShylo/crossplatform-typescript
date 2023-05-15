@@ -183,9 +183,11 @@ const Lab7 = () => {
                         }}
                     />
                 )}
-                <Text style={{ ...styles.text, alignSelf: "center" }}>
-                    Табулювання
-                </Text>
+                {arrY.length !== 0 ? (
+                    <Text style={{ ...styles.text, alignSelf: "center" }}>
+                        Табулювання
+                    </Text>
+                ) : null}
                 {arrY.map((elem, index) => {
                     return (
                         <View
@@ -201,7 +203,11 @@ const Lab7 = () => {
                         </View>
                     );
                 })}
-                <Text style={{ ...styles.text, alignSelf: "center" }}>Ряд</Text>
+                {arrYSeries.length !== 0 ? (
+                    <Text style={{ ...styles.text, alignSelf: "center" }}>
+                        Ряд
+                    </Text>
+                ) : null}
                 {arrYSeries.map((elem, index) => {
                     return (
                         <View
@@ -217,9 +223,11 @@ const Lab7 = () => {
                         </View>
                     );
                 })}
-                <Text style={{ ...styles.text, alignSelf: "center" }}>
-                    Рекурсія
-                </Text>
+                {arrYRecursion.length !== 0 ? (
+                    <Text style={{ ...styles.text, alignSelf: "center" }}>
+                        Рекурсія
+                    </Text>
+                ) : null}
                 {arrYRecursion.map((elem, index) => {
                     return (
                         <View

@@ -5,7 +5,6 @@ import {
     TextInput,
     ScrollView,
     Pressable,
-    Dimensions,
 } from "react-native";
 import React, { useState } from "react";
 import {
@@ -20,13 +19,15 @@ import {
 
 const Lab8 = () => {
     const [streets, setStreets] = useState<Street[]>([]);
-
+    const [editStreets, setEditStreets] = useState<Street[]>([]);
     const [name, setName] = useState("");
     const [length, setLength] = useState<number>(0);
     const [history, setHistory] = useState("");
     const [district, setDistrict] = useState("");
 
     const [list, setList] = useState<PreviousName[]>([]);
+
+    const [editable, setEditable] = useState(false);
 
     const addItem = () => {
         setList([...list, { id: Date.now(), value: "" }]);
@@ -43,6 +44,34 @@ const Lab8 = () => {
         setList(
             list.map((elem: any) => {
                 if (elem.id === id) {
+                    return { ...elem, [key]: text };
+                }
+                return elem;
+            })
+        );
+    };
+
+    const editChange = (
+        elIndex: number,
+        key: string,
+        text: string,
+        id: any = null
+    ) => {
+        setEditStreets(
+            editStreets.map((elem: any, index) => {
+                if (index === elIndex) {
+                    if (id) {
+                        const newArr = elem.previousNames.map((elem1: any) => {
+                            if (elem1.id === id) {
+                                return { ...elem1, ["value"]: text };
+                            }
+                            return elem1;
+                        });
+                        return {
+                            ...elem,
+                            [key]: newArr,
+                        };
+                    }
                     return { ...elem, [key]: text };
                 }
                 return elem;
@@ -79,6 +108,7 @@ const Lab8 = () => {
             return;
         }
         setStreets([...streets, newStreet]);
+        setEditStreets([...streets, newStreet]);
     };
 
     return (
@@ -233,43 +263,187 @@ const Lab8 = () => {
                 >
                     <Text style={styles.text}>Додати</Text>
                 </Pressable>
-                {streets.map((elem: Street) => {
-                    return (
-                        <View style={{ marginBottom: 10, marginTop: 10 }}>
-                            <Text style={styles.text}>
-                                Назва вулиці - {elem.name}
-                            </Text>
-                            <Text style={styles.text}>
-                                Довжина вулиці - {elem.length}
-                            </Text>
-                            <Text style={styles.text}>
-                                Історія вулиці - {elem.history}
-                            </Text>
-                            <Text style={styles.text}>
-                                Район - {elem.district}
-                            </Text>
-                            {elem.previousNames.length === 0 ? null : (
-                                <View>
-                                    <Text style={styles.text}>
-                                        Попередні назви:
-                                    </Text>
-                                    {elem.previousNames.map(
-                                        (elem: any, index) => {
-                                            return (
-                                                <Text style={styles.text}>
-                                                    {index +
-                                                        1 +
-                                                        "  " +
-                                                        elem.value}
-                                                </Text>
-                                            );
-                                        }
-                                    )}
-                                </View>
-                            )}
-                        </View>
-                    );
-                })}
+                {editable
+                    ? streets.map((elem: Street, index) => {
+                          return (
+                              <View
+                                  key={index}
+                                  style={{ marginBottom: 10, marginTop: 10 }}
+                              >
+                                  <Text style={styles.textDesc}>
+                                      {index + 1}
+                                  </Text>
+                                  <Text style={styles.textDesc}>
+                                      Назва вулиці:
+                                  </Text>
+                                  <TextInput
+                                      defaultValue={elem.name}
+                                      onChangeText={(text) =>
+                                          editChange(index, "name", text)
+                                      }
+                                      style={styles.text}
+                                  ></TextInput>
+                                  <Text style={styles.textDesc}>
+                                      Довжина вулиці:
+                                  </Text>
+                                  <TextInput
+                                      defaultValue={elem.length.toString()}
+                                      onChangeText={(text) =>
+                                          editChange(index, "length", text)
+                                      }
+                                      style={styles.text}
+                                  ></TextInput>
+                                  <Text style={styles.textDesc}>
+                                      Історія вулиці:
+                                  </Text>
+                                  <TextInput
+                                      defaultValue={elem.history}
+                                      onChangeText={(text) =>
+                                          editChange(index, "history", text)
+                                      }
+                                      style={styles.text}
+                                  ></TextInput>
+                                  <Text style={styles.textDesc}>Район:</Text>
+                                  <TextInput
+                                      defaultValue={elem.district}
+                                      onChangeText={(text) =>
+                                          editChange(index, "district", text)
+                                      }
+                                      style={styles.text}
+                                  ></TextInput>
+                                  {elem.previousNames.length === 0 ? null : (
+                                      <View>
+                                          <Text style={styles.textDesc}>
+                                              Попередні назви:
+                                          </Text>
+                                          {elem.previousNames.map(
+                                              (elem1: any, index1) => {
+                                                  return (
+                                                      <TextInput
+                                                          key={index1}
+                                                          style={styles.text}
+                                                          defaultValue={
+                                                              elem1.value
+                                                          }
+                                                          onChangeText={(
+                                                              text
+                                                          ) =>
+                                                              editChange(
+                                                                  index,
+                                                                  "previousNames",
+                                                                  text,
+                                                                  elem1.id
+                                                              )
+                                                          }
+                                                      ></TextInput>
+                                                  );
+                                              }
+                                          )}
+                                      </View>
+                                  )}
+                              </View>
+                          );
+                      })
+                    : streets.map((elem: Street, index) => {
+                          return (
+                              <View
+                                  key={index}
+                                  style={{ marginBottom: 10, marginTop: 10 }}
+                              >
+                                  <Text style={styles.textDesc}>
+                                      {index + 1}
+                                  </Text>
+                                  <Text style={styles.text}>
+                                      Назва вулиці - {elem.name}
+                                  </Text>
+                                  <Text style={styles.text}>
+                                      Довжина вулиці - {elem.length}
+                                  </Text>
+                                  <Text style={styles.text}>
+                                      Історія вулиці - {elem.history}
+                                  </Text>
+                                  <Text style={styles.text}>
+                                      Район - {elem.district}
+                                  </Text>
+                                  {elem.previousNames.length === 0 ? null : (
+                                      <View>
+                                          <Text style={styles.textDesc}>
+                                              Попередні назви:
+                                          </Text>
+                                          {elem.previousNames.map(
+                                              (elem: any, index) => {
+                                                  return (
+                                                      <Text
+                                                          key={index}
+                                                          style={styles.text}
+                                                      >
+                                                          {index +
+                                                              1 +
+                                                              "  " +
+                                                              elem.value}
+                                                      </Text>
+                                                  );
+                                              }
+                                          )}
+                                      </View>
+                                  )}
+                              </View>
+                          );
+                      })}
+                <Pressable
+                    style={({ pressed }) => [
+                        {
+                            backgroundColor: pressed ? "#66a3ff" : "#0066ff",
+                        },
+                        styles.button,
+                    ]}
+                    onPress={() => {
+                        if (editable) {
+                            let flag = true;
+                            editStreets.forEach((newStreet: any) => {
+                                if (!nameValidator(newStreet).isValid) {
+                                    alert(nameValidator(newStreet).message);
+                                    flag = false;
+                                    return;
+                                }
+                                if (!districtValidator(newStreet).isValid) {
+                                    alert(districtValidator(newStreet).message);
+                                    flag = false;
+                                    return;
+                                }
+                                if (!lengthValidator(newStreet).isValid) {
+                                    alert(lengthValidator(newStreet).message);
+                                    flag = false;
+                                    return;
+                                }
+                                if (!historyValidator(newStreet).isValid) {
+                                    alert(historyValidator(newStreet).message);
+                                    flag = false;
+                                    return;
+                                }
+                                if (
+                                    !previousNamesValidator(newStreet).isValid
+                                ) {
+                                    alert(
+                                        previousNamesValidator(newStreet)
+                                            .message
+                                    );
+                                    flag = false;
+                                    return;
+                                }
+                            });
+                            if (!flag) return;
+                            setStreets([...editStreets]);
+                        }
+                        setEditable(!editable);
+                    }}
+                >
+                    {editable ? (
+                        <Text style={styles.text}>Submit</Text>
+                    ) : (
+                        <Text style={styles.text}>Edit</Text>
+                    )}
+                </Pressable>
             </ScrollView>
         </>
     );
@@ -291,6 +465,14 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         letterSpacing: 0.25,
         color: "white",
+        alignSelf: "center",
+    },
+    textDesc: {
+        fontSize: 20,
+        lineHeight: 21,
+        fontWeight: "bold",
+        letterSpacing: 0.25,
+        color: "black",
         alignSelf: "center",
     },
     res: {

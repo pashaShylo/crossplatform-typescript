@@ -1,0 +1,20 @@
+{
+    "Worker": [
+        {
+            "id": 0,
+            "name": "Pavlo",
+            "surname": "Shylo",
+            "position_id": 1
+        },
+        {
+            "id": 1,
+            "name": "Oleg",
+            "surname": "Kytryk",
+            "position_id": 2
+        }
+    ],
+    "Position": [
+        { "id": 1, "name": "Менеджер" },
+        { "id": 2, "name": "Рекрутер" }
+    ]
+}

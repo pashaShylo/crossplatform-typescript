@@ -6,11 +6,31 @@ import {
     ScrollView,
     Pressable,
     Dimensions,
+    ActivityIndicator,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Controller, useForm } from "react-hook-form";
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getDatabase, ref, onValue, push } from "firebase/database";
+import useStore from "./store";
 
+const firebaseConfig = {
+    apiKey: "AIzaSyDxUDxE8uymttbABO9_fQW42IKfB8A7rTk",
+    authDomain: "lab11-2db54.firebaseapp.com",
+    databaseURL:
+        "https://lab11-2db54-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "lab11-2db54",
+    storageBucket: "lab11-2db54.appspot.com",
+    messagingSenderId: "673448840323",
+    appId: "1:673448840323:web:c06680615495bd91f55fb6",
+    measurementId: "G-EBNMMPGCX5",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 const Lab10 = () => {
     const [workerList, setWorkerList] = useState<any>([]);
     const { handleSubmit, control } = useForm();
@@ -19,11 +39,15 @@ const Lab10 = () => {
     const [newPos, setNewPos] = useState("");
     const [name, setName] = useState("");
     const [surname, setSurname] = useState("");
-    const [position, setPosition] = useState([
-        { label: "Менеджер", value: 1 },
-        { label: "Рекрутер", value: 2 },
-    ]);
-    const [activePos, setActivePos] = useState(position[0]);
+
+    const position = useStore((state: any) => state.position);
+    const setPosition = useStore((state: any) => state.setPosition);
+    const workers = useStore((state: any) => state.workers);
+    const setWorkers = useStore((state: any) => state.setWorkers);
+
+    const activePos = useStore((state: any) => state.activePos);
+    const setActivePos = useStore((state: any) => state.setActivePos);
+
     return (
         <>
             <ScrollView
@@ -35,26 +59,38 @@ const Lab10 = () => {
             >
                 <Pressable
                     style={({ pressed }) => [
-                        { backgroundColor: pressed ? "#66a3ff" : "#0066ff" },
+                        {
+                            backgroundColor: pressed ? "#66a3ff" : "#0066ff",
+                        },
                         { ...styles.button, marginTop: 10 },
                     ]}
                     onPress={() => {
                         setActivePos(
                             position[
-                                position.reduce((summ, elem, index) => {
-                                    if (elem.value === activePos.value) {
-                                        return summ + index;
-                                    }
-                                    return summ;
-                                }, 0) + 1
+                                position.reduce(
+                                    (summ: any, elem: any, index: any) => {
+                                        if (elem.id === activePos.id) {
+                                            return summ + index;
+                                        }
+                                        return summ;
+                                    },
+                                    0
+                                ) + 1
                             ]
                                 ? position[
-                                      position.reduce((summ, elem, index) => {
-                                          if (elem.value === activePos.value) {
-                                              return summ + index;
-                                          }
-                                          return summ;
-                                      }, 0) + 1
+                                      position.reduce(
+                                          (
+                                              summ: any,
+                                              elem: any,
+                                              index: any
+                                          ) => {
+                                              if (elem.id === activePos.id) {
+                                                  return summ + index;
+                                              }
+                                              return summ;
+                                          },
+                                          0
+                                      ) + 1
                                   ]
                                 : position[0]
                         );
@@ -62,12 +98,12 @@ const Lab10 = () => {
                 >
                     <Text style={styles.text}>Наступна посада</Text>
                 </Pressable>
-                <Text style={styles.text}>
-                    Поточна посада {activePos.label}
-                </Text>
-                {workerList
+
+                <Text style={styles.text}>Поточна посада {activePos.name}</Text>
+
+                {workers
                     .filter((elem: any) => {
-                        return elem.position === activePos.value;
+                        return elem.position_id === activePos.id;
                     })
                     .map((elem: any) => {
                         return (
@@ -99,7 +135,7 @@ const Lab10 = () => {
                     ]}
                     onPress={() => {
                         let flag = false;
-                        position.forEach((elem) => {
+                        position.forEach((elem: any) => {
                             if (elem.label === newPos) {
                                 flag = true;
                                 alert("Така посада вже існує");
@@ -109,8 +145,12 @@ const Lab10 = () => {
                         if (flag) return;
                         setPosition([
                             ...position,
-                            { label: newPos, value: position.length + 1 },
+                            { id: position.length + 1, name: newPos },
                         ]);
+                        push(ref(db, "/Position"), {
+                            id: position.length + 1,
+                            name: newPos,
+                        });
                     }}
                 >
                     <Text style={styles.text}>Додати посаду</Text>
@@ -170,15 +210,14 @@ const Lab10 = () => {
                         { ...styles.button, width: 300 },
                     ]}
                     onPress={() => {
-                        setWorkerList([
-                            ...workerList,
-                            {
-                                id: Date.now(),
-                                name: name,
-                                surname: surname,
-                                position: activePos.value,
-                            },
-                        ]);
+                        const newObj = {
+                            id: Date.now(),
+                            name: name,
+                            surname: surname,
+                            position_id: activePos.id,
+                        };
+                        setWorkers([...workers, , newObj]);
+                        push(ref(db, "/Worker"), { ...newObj });
                     }}
                 >
                     <Text style={styles.text}>Додати співробітника</Text>

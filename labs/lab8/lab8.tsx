@@ -16,6 +16,7 @@ import {
     PreviousName,
     Street,
 } from "./validation";
+import Edit from "./edit";
 
 const Lab8 = () => {
     const [streets, setStreets] = useState<Street[]>([]);
@@ -263,133 +264,11 @@ const Lab8 = () => {
                 >
                     <Text style={styles.text}>Додати</Text>
                 </Pressable>
-                {editable
-                    ? streets.map((elem: Street, index) => {
-                          return (
-                              <View
-                                  key={index}
-                                  style={{ marginBottom: 10, marginTop: 10 }}
-                              >
-                                  <Text style={styles.textDesc}>
-                                      {index + 1}
-                                  </Text>
-                                  <Text style={styles.textDesc}>
-                                      Назва вулиці:
-                                  </Text>
-                                  <TextInput
-                                      defaultValue={elem.name}
-                                      onChangeText={(text) =>
-                                          editChange(index, "name", text)
-                                      }
-                                      style={styles.text}
-                                  ></TextInput>
-                                  <Text style={styles.textDesc}>
-                                      Довжина вулиці:
-                                  </Text>
-                                  <TextInput
-                                      defaultValue={elem.length.toString()}
-                                      onChangeText={(text) =>
-                                          editChange(index, "length", text)
-                                      }
-                                      style={styles.text}
-                                  ></TextInput>
-                                  <Text style={styles.textDesc}>
-                                      Історія вулиці:
-                                  </Text>
-                                  <TextInput
-                                      defaultValue={elem.history}
-                                      onChangeText={(text) =>
-                                          editChange(index, "history", text)
-                                      }
-                                      style={styles.text}
-                                  ></TextInput>
-                                  <Text style={styles.textDesc}>Район:</Text>
-                                  <TextInput
-                                      defaultValue={elem.district}
-                                      onChangeText={(text) =>
-                                          editChange(index, "district", text)
-                                      }
-                                      style={styles.text}
-                                  ></TextInput>
-                                  {elem.previousNames.length === 0 ? null : (
-                                      <View>
-                                          <Text style={styles.textDesc}>
-                                              Попередні назви:
-                                          </Text>
-                                          {elem.previousNames.map(
-                                              (elem1: any, index1) => {
-                                                  return (
-                                                      <TextInput
-                                                          key={index1}
-                                                          style={styles.text}
-                                                          defaultValue={
-                                                              elem1.value
-                                                          }
-                                                          onChangeText={(
-                                                              text
-                                                          ) =>
-                                                              editChange(
-                                                                  index,
-                                                                  "previousNames",
-                                                                  text,
-                                                                  elem1.id
-                                                              )
-                                                          }
-                                                      ></TextInput>
-                                                  );
-                                              }
-                                          )}
-                                      </View>
-                                  )}
-                              </View>
-                          );
-                      })
-                    : streets.map((elem: Street, index) => {
-                          return (
-                              <View
-                                  key={index}
-                                  style={{ marginBottom: 10, marginTop: 10 }}
-                              >
-                                  <Text style={styles.textDesc}>
-                                      {index + 1}
-                                  </Text>
-                                  <Text style={styles.text}>
-                                      Назва вулиці - {elem.name}
-                                  </Text>
-                                  <Text style={styles.text}>
-                                      Довжина вулиці - {elem.length}
-                                  </Text>
-                                  <Text style={styles.text}>
-                                      Історія вулиці - {elem.history}
-                                  </Text>
-                                  <Text style={styles.text}>
-                                      Район - {elem.district}
-                                  </Text>
-                                  {elem.previousNames.length === 0 ? null : (
-                                      <View>
-                                          <Text style={styles.textDesc}>
-                                              Попередні назви:
-                                          </Text>
-                                          {elem.previousNames.map(
-                                              (elem: any, index) => {
-                                                  return (
-                                                      <Text
-                                                          key={index}
-                                                          style={styles.text}
-                                                      >
-                                                          {index +
-                                                              1 +
-                                                              "  " +
-                                                              elem.value}
-                                                      </Text>
-                                                  );
-                                              }
-                                          )}
-                                      </View>
-                                  )}
-                              </View>
-                          );
-                      })}
+                <Edit
+                    editable={editable}
+                    streets={streets}
+                    editChange={editChange}
+                />
                 {streets.length !== 0 ? (
                     <Pressable
                         style={({ pressed }) => [

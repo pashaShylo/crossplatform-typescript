@@ -11,6 +11,7 @@ import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { getDatabase, ref, onValue, push } from "firebase/database";
 import { ActivityIndicator } from "react-native";
 import useStore from "../labs/lab10/store";
+import OOAP from "../labs/OOAP/ooap";
 const firebaseConfig = {
     apiKey: "AIzaSyDxUDxE8uymttbABO9_fQW42IKfB8A7rTk",
     authDomain: "lab11-2db54.firebaseapp.com",
@@ -35,37 +36,37 @@ function headerTabNavigator() {
     const activePos = useStore((state: any) => state.activePos);
     const setActivePos = useStore((state: any) => state.setActivePos);
 
-    useEffect(() => {
-        onValue(ref(db, "Position"), (querySnapShot) => {
-            const data = querySnapShot.val();
-            const data2: any[] = [];
-            if (Array.isArray(data)) {
-                setPosition(data);
-                return;
-            }
-            for (let key in data) {
-                data2.push(data[key]);
-            }
-            setPosition(data2);
-        });
-        onValue(ref(db, "Worker"), (querySnapShot) => {
-            const data = querySnapShot.val();
-            const data2: any[] = [];
-            if (Array.isArray(data)) {
-                setWorkers(data);
-                return;
-            }
-            for (let key in data) {
-                data2.push(data[key]);
-            }
-            setWorkers(data2);
-        });
+    // useEffect(() => {
+    //     onValue(ref(db, "Position"), (querySnapShot) => {
+    //         const data = querySnapShot.val();
+    //         const data2: any[] = [];
+    //         if (Array.isArray(data)) {
+    //             setPosition(data);
+    //             return;
+    //         }
+    //         for (let key in data) {
+    //             data2.push(data[key]);
+    //         }
+    //         setPosition(data2);
+    //     });
+    //     onValue(ref(db, "Worker"), (querySnapShot) => {
+    //         const data = querySnapShot.val();
+    //         const data2: any[] = [];
+    //         if (Array.isArray(data)) {
+    //             setWorkers(data);
+    //             return;
+    //         }
+    //         for (let key in data) {
+    //             data2.push(data[key]);
+    //         }
+    //         setWorkers(data2);
+    //     });
 
-        setActivePos(position[0]);
-    }, []);
-    if (!activePos || position.length === 0 || workers.length === 0) {
-        return <ActivityIndicator></ActivityIndicator>;
-    }
+    //     setActivePos(position[0]);
+    // }, []);
+    // if (!activePos || position.length === 0 || workers.length === 0) {
+    //     return <ActivityIndicator></ActivityIndicator>;
+    // }
     return (
         <Drawer.Navigator useLegacyImplementation={true}>
             <Drawer.Screen name="Lab4" component={Lab4} />
@@ -73,6 +74,7 @@ function headerTabNavigator() {
             <Drawer.Screen name="Lab7" component={Lab7} />
             <Drawer.Screen name="Lab8-9" component={Lab8} />
             <Drawer.Screen name="Lab10-11" component={Lab10} />
+            <Drawer.Screen name="OOAP" component={OOAP} />
         </Drawer.Navigator>
     );
 }

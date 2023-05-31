@@ -1,6 +1,48 @@
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 
+export class PaymentContext {
+    private paymentStrategy: PaymentStrategy;
+
+    constructor(paymentStrategy: PaymentStrategy) {
+        this.paymentStrategy = paymentStrategy;
+    }
+
+    executePayment(amount: number) {
+        this.paymentStrategy.pay(amount);
+    }
+}
+
+export interface PaymentStrategy {
+    pay(amount: number): void;
+}
+
+export class CreditCardPaymentStrategy implements PaymentStrategy {
+    private cardNumber: string;
+
+    constructor(cardNumber: string) {
+        this.cardNumber = cardNumber;
+    }
+
+    pay(amount: number) {
+        alert(`Paying ${amount} credits with credit card ${this.cardNumber}`);
+    }
+}
+
+export class CryptocurrencyPaymentStrategy implements PaymentStrategy {
+    private walletAddress: string;
+
+    constructor(walletAddress: string) {
+        this.walletAddress = walletAddress;
+    }
+
+    pay(amount: number) {
+        alert(
+            `Paying ${amount} credits with cryptocurrency wallet ${this.walletAddress}`
+        );
+    }
+}
+
 interface AuthService {
     login(username: string, password: string, arr: any): any;
 }
@@ -252,13 +294,44 @@ export class Composite extends Product {
         console.log(`Total: ${this.getPrice()}`);
     }
 }
-
+class OrderStatus {
+    private name: string;
+    private nextStatus: any;
+    constructor(name: string, nextStatus: any) {
+        this.name = name;
+        this.nextStatus = nextStatus;
+    }
+    public next() {
+        return new this.nextStatus();
+    }
+}
+class WaitingForPayment extends OrderStatus {
+    constructor() {
+        super("Чекає на оплату", Shipping);
+    }
+}
+class Shipping extends OrderStatus {
+    constructor() {
+        super("В дорозі", Delivered);
+    }
+}
+class Delivered extends OrderStatus {
+    constructor() {
+        super("Доставлено", Delivered);
+    }
+}
 export class Order extends Composite {
     public orderId: string;
+    public orderStatus: any;
 
     constructor() {
         super();
         this.orderId = uuidv4();
+        this.orderStatus = new WaitingForPayment();
+    }
+
+    nextStatus() {
+        this.orderStatus = this.orderStatus.next();
     }
 }
 

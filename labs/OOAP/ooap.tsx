@@ -5,6 +5,7 @@ import {
     TextInput,
     ScrollView,
     Pressable,
+    FlatList,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import {
@@ -18,7 +19,12 @@ import {
     AuthProxy,
     BoxAdapter,
     Box,
+    PaymentContext,
+    CreditCardPaymentStrategy,
+    CryptocurrencyPaymentStrategy,
 } from "./classes";
+import DropDownPicker from "react-native-dropdown-picker";
+import { Controller, useForm } from "react-hook-form";
 const users = [
     { name: "Pavlo", password: "123", role: "admin" },
     { name: "Nikita", password: "123", role: "user" },
@@ -37,7 +43,17 @@ const CocaCola = drinkFactory.createProduct("CocaCola", 10);
 const Sprite = drinkFactory.createProduct("Sprite", 10);
 const authProxy = new AuthProxy();
 let orderBuilder: any;
+
 const OOAP = () => {
+    const { handleSubmit, control } = useForm();
+    const [dropDownOpen, setDropDownOpen] = useState(false);
+    const payTypes = [
+        { label: "Card", value: "card" },
+        { label: "Crypto", value: "crypto" },
+    ];
+    const [payValue, setPayValue] = useState(null);
+    const [card, setCard] = useState("");
+    const [cryptoWallet, setCryptoWallet] = useState("");
     const [isAuth, setIsAuth] = useState(false);
     const [userRole, setUserRole] = useState<any>("");
     const [login, setLogin] = useState("");
@@ -163,6 +179,97 @@ const OOAP = () => {
                     >
                         <Text style={styles.text}>LogOut</Text>
                     </Pressable>
+                    {orderList.map((elem: Order, index: number) => {
+                        return (
+                            <View
+                                key={elem.orderId}
+                                style={{
+                                    flexDirection: "column",
+                                    marginTop: 30,
+                                }}
+                            >
+                                <Text style={styles.text}>{index + 1}</Text>
+                                {elem
+                                    .getProducts()
+                                    .map((elem: Product, index: number) => {
+                                        return (
+                                            <View
+                                                style={{
+                                                    flexDirection: "column",
+                                                }}
+                                                key={index}
+                                            >
+                                                <Text
+                                                    style={{
+                                                        ...styles.text,
+                                                    }}
+                                                >
+                                                    {elem.getDescription()}
+                                                </Text>
+                                            </View>
+                                        );
+                                    })}
+                                <Text
+                                    style={{
+                                        ...styles.text,
+                                        alignSelf: "center",
+                                    }}
+                                >
+                                    {elem.getPrice()}
+                                </Text>
+                                <Pressable
+                                    style={({ pressed }) => [
+                                        {
+                                            backgroundColor: pressed
+                                                ? "#66a3ff"
+                                                : "#0066ff",
+                                        },
+                                        {
+                                            width: 200,
+                                            height: 40,
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            borderRadius: 12,
+                                            alignSelf: "center",
+                                            marginTop: 20,
+                                        },
+                                    ]}
+                                    onPress={() => {
+                                        alert(elem.orderStatus.name);
+                                    }}
+                                >
+                                    <Text style={styles.text}>
+                                        Перевірити статус
+                                    </Text>
+                                </Pressable>
+                                <Pressable
+                                    style={({ pressed }) => [
+                                        {
+                                            backgroundColor: pressed
+                                                ? "#66a3ff"
+                                                : "#0066ff",
+                                        },
+                                        {
+                                            width: 200,
+                                            height: 40,
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            borderRadius: 12,
+                                            alignSelf: "center",
+                                            marginTop: 20,
+                                        },
+                                    ]}
+                                    onPress={() => {
+                                        elem.nextStatus();
+                                    }}
+                                >
+                                    <Text style={styles.text}>
+                                        Наступний статус
+                                    </Text>
+                                </Pressable>
+                            </View>
+                        );
+                    })}
                 </ScrollView>
             );
         }
@@ -259,6 +366,31 @@ const OOAP = () => {
                             >
                                 {elem.getPrice()}
                             </Text>
+                            <Pressable
+                                style={({ pressed }) => [
+                                    {
+                                        backgroundColor: pressed
+                                            ? "#66a3ff"
+                                            : "#0066ff",
+                                    },
+                                    {
+                                        width: 200,
+                                        height: 40,
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        borderRadius: 12,
+                                        alignSelf: "center",
+                                        marginTop: 20,
+                                    },
+                                ]}
+                                onPress={() => {
+                                    alert(elem.orderStatus.name);
+                                }}
+                            >
+                                <Text style={styles.text}>
+                                    Перевірити статус
+                                </Text>
+                            </Pressable>
                         </View>
                     );
                 })}
@@ -439,7 +571,47 @@ const OOAP = () => {
                         </View>
                     );
                 })}
-                {orderBuilder.getOrder().getProducts().length === 0 ? null : (
+                <Controller
+                    name="payType"
+                    defaultValue=""
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                        <View style={styles.dropdown1}>
+                            <DropDownPicker
+                                style={styles.dropdown}
+                                open={dropDownOpen}
+                                value={payValue}
+                                items={payTypes}
+                                setOpen={setDropDownOpen}
+                                setValue={setPayValue}
+                                placeholder="Виберіть тип оплати"
+                                placeholderStyle={styles.placeholderStyles}
+                                activityIndicatorColor="#5188E3"
+                                searchable={false}
+                                searchPlaceholder=""
+                                onChangeValue={onChange}
+                                zIndex={1001}
+                                zIndexInverse={3001}
+                            />
+                        </View>
+                    )}
+                />
+                {payValue === "card" ? (
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={(text) => setCard(text)}
+                        placeholder="Введіть номер картки"
+                    />
+                ) : null}
+                {payValue === "crypto" ? (
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={(text) => setCryptoWallet(text)}
+                        placeholder="Введіть номер криптогаманця"
+                    />
+                ) : null}
+                {orderBuilder.getOrder().getProducts().length === 0 ||
+                payValue == null ? null : (
                     <Pressable
                         style={({ pressed }) => [
                             {
@@ -458,14 +630,20 @@ const OOAP = () => {
                             },
                         ]}
                         onPress={() => {
-                            if (
-                                orderBuilder.getOrder().getProducts().length ===
-                                0
-                            ) {
-                                return;
+                            let payStrat;
+                            if (payValue === "card") {
+                                payStrat = new CreditCardPaymentStrategy(card);
+                            } else {
+                                payStrat = new CryptocurrencyPaymentStrategy(
+                                    cryptoWallet
+                                );
                             }
-                            addOrder(orderBuilder.build());
-                            newCafe.placeOrder(orderBuilder.build());
+                            const order = orderBuilder.build();
+                            order.nextStatus();
+                            const payment = new PaymentContext(payStrat);
+                            payment.executePayment(order.getPrice());
+                            addOrder(order);
+                            newCafe.placeOrder(order);
                             setOrder([
                                 { value: Margarita, cnt: 0 },
                                 { value: BoxMargaritaAdapter, cnt: 0 },
@@ -474,10 +652,11 @@ const OOAP = () => {
                                 { value: CocaCola, cnt: 0 },
                                 { value: Sprite, cnt: 0 },
                             ]);
+                            setPayValue(null);
                             setMakingOrder(false);
                         }}
                     >
-                        <Text style={styles.text}>Make order</Text>
+                        <Text style={styles.text}>Pay for order</Text>
                     </Pressable>
                 )}
             </ScrollView>
@@ -526,6 +705,31 @@ const styles = StyleSheet.create({
         fontSize: 20,
         padding: 5,
         flex: 1,
+        width: 300,
+        alignSelf: "center",
+    },
+    dropdown: {
+        borderColor: "#82ccdd",
+        borderWidth: 4,
+        borderRadius: 12,
+        height: 50,
+    },
+    placeholderStyles: {
+        color: "grey",
+    },
+    dropdown1: {
+        marginHorizontal: 10,
+        marginBottom: 15,
+        width: 200,
+        zIndex: 20,
+        alignSelf: "center",
+        paddingTop: 30,
+    },
+    dropdown2: {
+        marginHorizontal: 10,
+        marginBottom: 15,
+        width: 200,
+        zIndex: 10,
     },
 });
 
